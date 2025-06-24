@@ -23,12 +23,12 @@ console.log('Starting Firebase initialization...');
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'workwise-sa-project.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'workwise-sa-project',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'workwise-sa-project.appspot.com',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyDygjMpaMXBEBcRnVVtOxW41nD7DA-cXJY",
+  authDomain: "workwise-sa-project.firebaseapp.com",
+  projectId: "workwise-sa-project",
+  storageBucket: "workwise-sa-project.firebasestorage.app",
+  messagingSenderId: "716919248302",
+  appId: "1:716919248302:web:582684fa2eb06133aca43f",
 };
 
 console.log('Firebase config:', { ...firebaseConfig, apiKey: '[REDACTED]' });

@@ -4,9 +4,23 @@ import { Link, useLocation } from 'wouter';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
@@ -51,24 +65,26 @@ const Login = () => {
       // In a real app, you'd check if user has completed profile setup
       navigate('/profile-setup');
     } catch (error: any) {
-      let errorMessage = "Failed to sign in with Google. Please try again.";
+      let errorMessage = 'Failed to sign in with Google. Please try again.';
 
       // Handle specific Firebase error codes
       if (error.code === 'auth/operation-not-allowed') {
-        errorMessage = "Google sign-in is not enabled. Please try another method or contact support.";
+        errorMessage =
+          'Google sign-in is not enabled. Please try another method or contact support.';
       } else if (error.code === 'auth/popup-closed-by-user') {
-        errorMessage = "Sign-in popup was closed. Please try again.";
+        errorMessage = 'Sign-in popup was closed. Please try again.';
       } else if (error.code === 'auth/cancelled-popup-request') {
-        errorMessage = "Multiple popup requests were made. Please try again.";
+        errorMessage = 'Multiple popup requests were made. Please try again.';
       } else if (error.code === 'auth/popup-blocked') {
-        errorMessage = "Sign-in popup was blocked by your browser. Please allow popups for this site.";
+        errorMessage =
+          'Sign-in popup was blocked by your browser. Please allow popups for this site.';
       }
 
-      console.error("Google sign-in error:", error.code, error.message);
+      console.error('Google sign-in error:', error.code, error.message);
 
       toast({
-        variant: "destructive",
-        title: "Login Failed",
+        variant: 'destructive',
+        title: 'Login Failed',
         description: errorMessage,
       });
     } finally {
@@ -86,20 +102,20 @@ const Login = () => {
       // In a real app, you'd check if user has completed profile setup
       navigate('/profile-setup');
     } catch (error: any) {
-      let errorMessage = "Invalid email or password. Please try again.";
+      let errorMessage = 'Invalid email or password. Please try again.';
 
       // Handle specific Firebase error codes
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        errorMessage = "Invalid email or password. Please try again.";
+        errorMessage = 'Invalid email or password. Please try again.';
       } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = "Too many unsuccessful login attempts. Please try again later.";
+        errorMessage = 'Too many unsuccessful login attempts. Please try again later.';
       } else if (error.code === 'auth/network-request-failed') {
-        errorMessage = "Network error. Please check your internet connection.";
+        errorMessage = 'Network error. Please check your internet connection.';
       }
 
       toast({
-        variant: "destructive",
-        title: "Login Failed",
+        variant: 'destructive',
+        title: 'Login Failed',
         description: errorMessage,
       });
     } finally {
@@ -111,7 +127,10 @@ const Login = () => {
     <>
       <Helmet>
         <title>Login | WorkWise SA</title>
-        <meta name="description" content="Login to your WorkWise SA account to access job applications, saved jobs, and profile settings." />
+        <meta
+          name="description"
+          content="Login to your WorkWise SA account to access job applications, saved jobs, and profile settings."
+        />
       </Helmet>
 
       <main className="flex-grow bg-light flex items-center justify-center py-10">
@@ -165,12 +184,11 @@ const Login = () => {
                     render={({ field }) => (
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
-                        <FormLabel className="text-sm font-normal cursor-pointer">Remember me</FormLabel>
+                        <FormLabel className="text-sm font-normal cursor-pointer">
+                          Remember me
+                        </FormLabel>
                       </FormItem>
                     )}
                   />
@@ -179,7 +197,7 @@ const Login = () => {
                   </Link>
                 </div>
                 <Button type="submit" className="w-full bg-primary" disabled={isLoading}>
-                  {isLoading ? "Logging in..." : "Login"}
+                  {isLoading ? 'Logging in...' : 'Login'}
                 </Button>
               </form>
               <div className="mt-4 text-center">
