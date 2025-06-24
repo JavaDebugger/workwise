@@ -60,10 +60,10 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   
   // Social media links configuration
   const socialLinks = [
-    { href: 'https://facebook.com/workwisesa', label: 'Facebook', icon: 'fa-facebook-f' },
-    { href: 'https://twitter.com/workwisesa', label: 'Twitter', icon: 'fa-twitter' },
-    { href: 'https://linkedin.com/company/workwisesa', label: 'LinkedIn', icon: 'fa-linkedin-in' },
-    { href: 'https://instagram.com/workwisesa', label: 'Instagram', icon: 'fa-instagram' }
+    { href: 'https://www.facebook.com/profile.php?id=61575790149796', label: 'Facebook', icon: 'fa-facebook-f' },
+    { href: 'https://x.com/WorkWise_SA', label: 'X (formerly Twitter)', icon: 'fa-x-twitter' },
+    { href: 'https://www.linkedin.com/in/work-wise-sa-36a133370/', label: 'LinkedIn', icon: 'fa-linkedin-in' },
+    { href: 'https://www.instagram.com/work.wise_sa/', label: 'Instagram', icon: 'fa-instagram' }
   ];
 
   return (

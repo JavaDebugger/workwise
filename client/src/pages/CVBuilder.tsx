@@ -458,17 +458,48 @@ export default function CVBuilder() {
   };
 
   // Form submission handler
-  const onSubmit = (data: CVFormValues) => {
-    console.log('Form data submitted:', data);
+  const onSubmit = async (data: CVFormValues) => {
+    try {
+      // Call the CV template generation endpoint
+      const response = await fetch('/api/cv/generate-template', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-    // Generate a printable CV
-    const cvContent = generateCVHTML(data);
-    setGeneratedCV(cvContent);
+      if (!response.ok) {
+        throw new Error('Failed to generate CV');
+      }
 
-    toast({
-      title: 'CV Generated',
-      description: 'Your CV has been generated. You can now download it.',
-    });
+      // Get the PDF blob
+      const pdfBlob = await response.blob();
+      
+      // Create a URL for the blob
+      const url = URL.createObjectURL(pdfBlob);
+
+      // Create a link to download the PDF
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${data.personalInfo.fullName.replace(/\s+/g, '_')}_CV.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: 'CV Generated Successfully',
+        description: 'Your CV has been generated and downloaded.',
+      });
+    } catch (error) {
+      console.error('Error generating CV:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to generate CV. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   // Function to generate HTML for CV

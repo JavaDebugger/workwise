@@ -26,21 +26,19 @@
     "source": "dataconnect"
   },
   "firestore": {
+    "database": "(default)",
+    "location": "nam5",
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "dist/public",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
     "rewrites": [
-      {
-        "source": "/api/**",
-        "function": "api"
-      },
       {
         "source": "**",
         "destination": "/index.html"

@@ -176,6 +176,210 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Profile routes
+  app.get("/api/profile/:userId", async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      
+      // Mock profile data for now (replace with actual database calls when ready)
+      const mockProfile = {
+        personal: {
+          fullName: 'John Doe',
+          phoneNumber: '+27123456789',
+          location: 'Johannesburg, Gauteng',
+          bio: 'Experienced professional looking for new opportunities in South Africa.',
+          profilePicture: '/images/default-avatar.png'
+        },
+        education: {
+          highestEducation: 'Matric Certificate',
+          schoolName: 'Johannesburg High School',
+          yearCompleted: '2020',
+          achievements: 'Mathematics and English distinctions'
+        },
+        experience: {
+          hasExperience: true,
+          jobTitle: 'General Worker',
+          employer: 'ABC Manufacturing',
+          startDate: '2021-01',
+          endDate: '2023-12',
+          jobDescription: 'Responsible for general factory duties and quality control.'
+        },
+        skills: {
+          skills: ['Communication', 'Teamwork', 'Time Management', 'Computer Literacy'],
+          languages: ['English', 'Afrikaans', 'Zulu'],
+          hasDriversLicense: true,
+          hasTransport: false
+        },
+        // Additional profile metadata
+        memberSince: 'January 2024',
+        engagementScore: 65,
+        ratings: {
+          overall: 4.2
+        },
+        applications: {
+          current: 3,
+          total: 12,
+          successRate: 0.25
+        },
+        preferences: {
+          locations: ['Johannesburg', 'Pretoria', 'Cape Town'],
+          jobTypes: ['Full-time', 'Part-time'],
+          minSalary: 8000,
+          willingToRelocate: true
+        },
+        recentActivity: [
+          {
+            content: 'Applied for Warehouse Assistant position at LogiCorp SA',
+            timestamp: '2 hours ago',
+            icon: 'Briefcase'
+          },
+          {
+            content: 'Updated profile information',
+            timestamp: '1 day ago',
+            icon: 'Edit'
+          },
+          {
+            content: 'Completed skills assessment',
+            timestamp: '3 days ago',
+            icon: 'Award'
+          }
+        ],
+        notifications: 2
+      };
+      
+      res.json(mockProfile);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
+  app.put("/api/profile/:userId", async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const profileData = req.body;
+      
+      // Mock profile update (replace with actual database update when ready)
+      console.log(`Updating profile for user ${userId}:`, profileData);
+      
+      res.json({
+        success: true,
+        message: 'Profile updated successfully',
+        data: profileData
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  // File upload endpoints
+  app.post("/api/files/upload-profile-image", async (req, res) => {
+    try {
+      // Mock file upload - replace with actual file handling
+      const mockImageUrl = `/images/uploaded/profile-${Date.now()}.jpg`;
+      
+      res.json({
+        success: true,
+        data: {
+          fileUrl: mockImageUrl
+        }
+      });
+    } catch (error) {
+      console.error("Error uploading profile image:", error);
+      res.status(500).json({ error: "Failed to upload profile image" });
+    }
+  });
+
+  app.post("/api/files/upload-cv", async (req, res) => {
+    try {
+      // Mock CV upload - replace with actual file handling
+      const mockCVUrl = `/files/uploaded/cv-${Date.now()}.pdf`;
+      
+      res.json({
+        success: true,
+        data: {
+          fileUrl: mockCVUrl
+        }
+      });
+    } catch (error) {
+      console.error("Error uploading CV:", error);
+      res.status(500).json({ error: "Failed to upload CV" });
+    }
+  });
+
+  app.post("/api/files/upload", async (req, res) => {
+    try {
+      // Mock generic file upload - replace with actual file handling
+      const mockFileUrl = `/files/uploaded/file-${Date.now()}`;
+      
+      res.json({
+        success: true,
+        data: {
+          id: Date.now(),
+          fileName: 'mock-file',
+          fileUrl: mockFileUrl,
+          fileType: req.body.fileType || 'unknown',
+          uploadDate: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      res.status(500).json({ error: "Failed to upload file" });
+    }
+  });
+
+  app.get("/api/files/user/:userId", async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      
+      // Mock user files - replace with actual database query
+      const mockFiles = [
+        {
+          id: 1,
+          fileName: 'resume.pdf',
+          fileUrl: '/files/user/resume.pdf',
+          fileType: 'cv',
+          uploadDate: '2024-01-15T10:30:00Z'
+        },
+        {
+          id: 2,
+          fileName: 'profile-picture.jpg',
+          fileUrl: '/images/user/profile.jpg',
+          fileType: 'profile-image',
+          uploadDate: '2024-01-10T14:20:00Z'
+        }
+      ];
+      
+      res.json({
+        success: true,
+        data: mockFiles
+      });
+    } catch (error) {
+      console.error("Error getting user files:", error);
+      res.status(500).json({ error: "Failed to get user files" });
+    }
+  });
+
+  app.delete("/api/files/:fileId", async (req, res) => {
+    try {
+      const fileId = req.params.fileId;
+      
+      // Mock file deletion - replace with actual file handling
+      console.log(`Deleting file with ID: ${fileId}`);
+      
+      res.json({
+        success: true,
+        data: {
+          deleted: true
+        }
+      });
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      res.status(500).json({ error: "Failed to delete file" });
+    }
+  });
+
   // AI-powered CV generation routes
   app.post("/api/cv/generate-summary", async (req, res) => {
     try {

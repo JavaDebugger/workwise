@@ -59,6 +59,11 @@ const Header = () => {
                 Resources
               </Link>
             </li>
+            <li>
+              <Link href="/contact" className={`text-dark hover:text-primary font-medium ${location === '/contact' ? 'text-primary' : ''}`}>
+                Contact
+              </Link>
+            </li>
           </ul>
           <div className="flex items-center space-x-3">
             <AdminButton variant="outline" />
@@ -132,6 +137,15 @@ const Header = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Resources
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/contact"
+                className={`block text-dark hover:text-primary font-medium ${location === '/contact' ? 'text-primary' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Contact
               </Link>
             </li>
             <li className="pt-3 border-t border-gray-100">

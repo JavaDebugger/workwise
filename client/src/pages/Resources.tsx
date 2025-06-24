@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
   Breadcrumb,
@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 
 // Import extracted components
 import RelatedResourcesSection from '@/components/resources/RelatedResourcesSection';
+import SubmitFeedbackModal from '@/components/modals/SubmitFeedbackModal';
 
 // Add window.analytics to the global Window interface
 declare global {
@@ -26,6 +27,8 @@ declare global {
 }
 
 const Resources = () => {
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+
   useEffect(() => {
     // Example analytics code (replace with your actual tracking)
     if (typeof window.analytics !== 'undefined') {
@@ -39,6 +42,11 @@ const Resources = () => {
         tab: tabName
       });
     }
+  };
+
+  const handleFeedbackClick = () => {
+    trackTabClick('Submit Feedback');
+    setIsFeedbackModalOpen(true);
   };
 
   return (
@@ -111,7 +119,7 @@ const Resources = () => {
                 </a>
                 <button
                   className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 font-medium hover:bg-gray-300"
-                  onClick={() => trackTabClick('Submit Feedback')}
+                  onClick={handleFeedbackClick}
                 >
                   Submit Feedback
                 </button>
@@ -259,6 +267,12 @@ const Resources = () => {
             </span>
           </Button>
         </div>
+
+        {/* Submit Feedback Modal */}
+        <SubmitFeedbackModal
+          isOpen={isFeedbackModalOpen}
+          onClose={() => setIsFeedbackModalOpen(false)}
+        />
       </main>
     </>
   );

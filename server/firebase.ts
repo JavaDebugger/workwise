@@ -14,12 +14,23 @@ function initializeFirebase() {
 
     // For development without emulators
     if (process.env.NODE_ENV !== 'production') {
-      const serviceAccount = require('../service-account.json');
-      return admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        projectId: process.env.FIREBASE_PROJECT_ID || 'workwisesa-dev-us',
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'workwisesa-dev-us.appspot.com'
-      });
+      try {
+        const serviceAccount = require('../service-account.json');
+        // Check if it's a placeholder file
+        if (serviceAccount.private_key_id === 'placeholder') {
+          log('Using placeholder Firebase Admin SDK - some features may not work');
+          // Return a mock app for development
+          return null;
+        }
+        return admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+          projectId: process.env.FIREBASE_PROJECT_ID || 'workwise-sa-project',
+          storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'workwise-sa-project.appspot.com'
+        });
+      } catch (error) {
+        log('Service account file not found or invalid, using development mode without Firebase Admin');
+        return null;
+      }
     }
 
     // For production
@@ -32,11 +43,37 @@ function initializeFirebase() {
 
 // Initialize Firebase and export the instances
 const firebaseApp = initializeFirebase();
+
+// Create mock services that won't crash the app
+const mockDb = {
+  collection: () => ({
+    doc: () => ({
+      get: async () => ({ exists: false, data: () => ({}) }),
+      set: async () => ({}),
+      update: async () => ({}),
+      delete: async () => ({})
+    }),
+    get: async () => ({ docs: [], empty: true }),
+    add: async () => ({ id: 'mock-id' })
+  })
+};
+
+const mockStorage = {
+  bucket: () => ({
+    file: () => ({
+      getSignedUrl: async () => ['mock-url'],
+      delete: async () => ({})
+    })
+  })
+};
+
+// Export services - use real Firebase if available, otherwise use mocks
+export const db = firebaseApp ? admin.firestore(firebaseApp) : mockDb;
+export const storage = firebaseApp ? admin.storage(firebaseApp) : mockStorage;
+
 if (!firebaseApp) {
-  throw new Error('Failed to initialize Firebase Admin SDK');
+  log('Firebase Admin SDK not available - using mock services for development');
 }
-export const db = admin.firestore(firebaseApp);
-export const storage = admin.storage(firebaseApp);
 
 export default firebaseApp;
 

@@ -1,47 +1,58 @@
-# WorkWise SA Firebase Development Container
+# DevContainer Configuration
 
-This directory contains configuration for a development container optimized for Firebase development for the WorkWise SA project.
+This directory contains the development container configuration for the WorkWise SA project.
 
-## Features
+## Recent Fix Applied
 
-- Node.js 20 environment
-- Firebase CLI pre-installed
-- Firebase Emulators support
-- Git integration
-- Docker-in-Docker capability
-- VS Code extensions for Firebase, TypeScript, ESLint, and more
+**Issue**: Container build was failing due to an inaccessible Firebase CLI feature from GitHub Container Registry.
 
-## Requirements
+**Error**: 
+```
+Could not resolve Feature manifest for 'ghcr.io/devcontainers/features/firebase-cli:1'
+```
 
-- Docker Desktop (Windows/Mac) or Docker Engine (Linux)
-- Visual Studio Code with Dev Containers extension
+**Solution**: 
+- Removed the problematic `ghcr.io/devcontainers/features/firebase-cli:1` feature from `devcontainer.json`
+- Firebase CLI is now installed directly in the Dockerfile and via `postCreateCommand`
+- This ensures a more reliable installation process
 
-## Ports
+## Configuration Details
 
-The following ports are forwarded from the container to the host:
+### Features Used
+- `ghcr.io/devcontainers/features/docker-in-docker:2` - Docker support within the container
+- `ghcr.io/devcontainers/features/git:1` - Git tools
 
-- 5000: Firebase Hosting
-- 5001: Firebase Functions
-- 8080: Firebase Firestore
-- 9099: Firebase Auth
-- 9199: Firebase Storage
+### Ports Forwarded
+- 5000, 5001 - Firebase hosting and functions
+- 8080 - Development server
+- 9099, 9199 - Firebase emulators
 
-## Usage
+### Post-Creation Commands
+- Installs latest Firebase CLI globally
+- Installs dependencies in the functions directory
 
-1. Open the project in VS Code
-2. Press F1 and select "Dev Containers: Reopen in Container"
-3. VS Code will build the container and open the project inside it
-4. The container will automatically install Firebase CLI and dependencies
-5. You'll be prompted to log in to Firebase on first start
+## Troubleshooting
 
-## Firebase Commands
+### If container build fails:
+1. Check Docker is running: `docker --version`
+2. Clean up old containers: `docker system prune -a`
+3. Rebuild container from VS Code Command Palette: "Dev Containers: Rebuild Container"
 
-- `firebase emulators:start` - Start all Firebase emulators
-- `firebase deploy` - Deploy to Firebase
-- `firebase serve` - Run Firebase locally
-- `firebase functions:shell` - Test Firebase functions locally
+### If Firebase CLI is missing:
+The Firebase CLI is installed via multiple methods for redundancy:
+- In Dockerfile: `npm install -g firebase-tools`
+- In postCreateCommand: `npm install -g firebase-tools@latest`
 
-## Customization
+### Common Issues:
+- **Network connectivity**: Ensure internet access for downloading base images and packages
+- **Docker permissions**: Make sure your user has Docker permissions
+- **Disk space**: Ensure sufficient disk space for container images (~2.3GB)
 
-- Modify `Dockerfile` to add system dependencies
-- Adjust `devcontainer.json` for VS Code settings and extensions
+## Manual Container Build (if needed)
+
+```bash
+# Build the container manually
+docker build -t workwise-sa-dev .devcontainer/
+
+# Run the container
+docker run -it --rm -v $(pwd):/workspaces/workwise-sa workwise-sa-dev

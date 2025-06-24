@@ -1,6 +1,9 @@
 import { Category, Company, Job } from '@shared/schema';
 
-// Mock categories data
+/**
+ * Mock categories data for development and testing
+ * Note: In production, this should be replaced with real API data
+ */
 export const mockCategories: Category[] = [
   { id: 1, name: 'General Worker', slug: 'general-worker', count: 245, icon: 'user' },
   { id: 2, name: 'Construction General Worker', slug: 'construction-worker', count: 178, icon: 'engineering' },
@@ -14,7 +17,10 @@ export const mockCategories: Category[] = [
   { id: 10, name: 'Retail Assistant', slug: 'retail', count: 189, icon: 'tag' }
 ];
 
-// Mock companies data
+/**
+ * Mock companies data for development and testing
+ * Note: In production, this should be replaced with real API data
+ */
 export const mockCompanies: Company[] = [
   {
     id: 1,
@@ -73,7 +79,10 @@ export const mockCompanies: Company[] = [
   }
 ];
 
-// Mock jobs data
+/**
+ * Mock jobs data for development and testing
+ * Note: In production, this should be replaced with real API data
+ */
 export const mockJobs: Job[] = [
   {
     id: 1,
@@ -133,8 +142,14 @@ export const mockJobs: Job[] = [
   }
 ];
 
-// Mock response format
+/**
+ * Creates a standardized mock response format
+ * @param data The data to wrap in a response object
+ * @returns Mock response object
+ */
 export const createMockResponse = <T>(data: T) => ({
   success: true,
-  data
+  data,
+  timestamp: new Date().toISOString(),
+  source: 'mock'
 });

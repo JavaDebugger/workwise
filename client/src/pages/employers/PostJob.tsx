@@ -1,13 +1,12 @@
-import { useState, useEffect, Suspense } from 'react';
-import { useNavigate } from 'wouter';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useLocation } from 'wouter';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Loader2, Save, Trash2, ArrowLeft, ArrowRight } from 'lucide-react';
 
 import CustomHelmet from '@/components/CustomHelmet';
-import { Button } from '@/components/ui';
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui';
+import { Button, AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui';
 
-import { INITIAL_FORM_STATE } from '@/constants/formConstants';
+import { INITIAL_FORM_STATE, JobFormValues } from '@/constants/formConstants';
 import useJobFormState from '@/hooks/useJobFormState';
 import useFormAutosave from '@/hooks/useFormAutosave';
 import { fetchCategories, generateAIContent, submitJobPost } from '@/services/jobService';
@@ -26,9 +25,9 @@ const LoadingStepFallback = () => (
 
 const PostJob = () => {
   const FORM_ID = "job-post-form-v1";
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const formState = useJobFormState(INITIAL_FORM_STATE);
-  const { loadSavedData, clearSaved } = useFormAutosave(formState.values, FORM_ID);
+  const { loadSavedData, clearSavedData } = useFormAutosave(formState.values, FORM_ID);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -44,11 +43,31 @@ const PostJob = () => {
     mutationFn: submitJobPost,
     onSuccess: (data) => {
       if (data.success) {
-        clearSaved();
-        navigate('/employers/jobs/' + data.jobId);
+        clearSavedData();
+        setLocation('/employers/jobs/' + data.jobId);
       }
     },
   });
+
+  const handleAIAssist = async (type: string) => {
+    setIsAiLoading(true);
+    try {
+      const response = await generateAIContent("", type, formState.values);
+      if (response.content) {
+        switch (type) {
+          case "description":
+            formState.handleChange("description", response.content);
+            break;
+          case "companyBio":
+            formState.handleChange("companyBio", response.content);
+            break;
+        }
+      }
+    } catch (error) {
+      console.error('Error generating AI content:', error);
+    }
+    setIsAiLoading(false);
+  };
 
   useEffect(() => {
     const savedDraft = loadSavedData();
@@ -124,25 +143,6 @@ const PostJob = () => {
     formState.setIsSubmitting(false);
   };
 
-  const handleAIAssist = async (type: string) => {
-    setIsAiLoading(true);
-    try {
-      const response = await generateAIContent("", type, formState.values);
-      if (response.content) {
-        switch (type) {
-          case "description":
-            formState.handleChange("description", response.content);
-            break;
-          case "companyBio":
-            formState.handleChange("companyBio", response.content);
-            break;
-        }
-      }
-    } catch (error) {
-      console.error('Error generating AI content:', error);
-    }
-    setIsAiLoading(false);
-  };
 
   return (
     <>
@@ -246,7 +246,7 @@ const PostJob = () => {
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => {
               setShowDraftDialog(false);
-              clearSaved();
+              clearSavedData();
             }}>
               <Trash2 className="w-4 h-4 mr-2" />
               Delete Draft

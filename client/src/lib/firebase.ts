@@ -11,66 +11,83 @@ import {
   signInWithPopup,
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
-  signInWithEmailLink
+  signInWithEmailLink,
+  ActionCodeSettings
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+// TODO: Firebase AI is not yet available in the current Firebase SDK version
+// import { getAI, getGenerativeModel, GoogleAIBackend } from "firebase/ai";
+
+console.log('Starting Firebase initialization...');
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'workwise-sa-project.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'workwise-sa-project',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'workwise-sa-project.appspot.com',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyDygjMpaMXBEBcRnVVtOxW41nD7DA-cXJY",
+  authDomain: "workwise-sa-project.firebaseapp.com",
+  projectId: "workwise-sa-project",
+  storageBucket: "workwise-sa-project.firebasestorage.app",
+  messagingSenderId: "716919248302",
+  appId: "1:716919248302:web:582684fa2eb06133aca43f",
 };
+
+console.log('Firebase config:', { ...firebaseConfig, apiKey: '[REDACTED]' });
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
+console.log('Firebase initialized successfully');
+
 // Connect to emulators in development mode
 if (import.meta.env.DEV) {
-  // Check if we should use emulators (can be disabled with env var)
   const useEmulators = import.meta.env.VITE_USE_FIREBASE_EMULATORS !== 'false';
+  console.log('Development mode detected, useEmulators:', useEmulators);
 
   if (useEmulators) {
-    console.log('Using Firebase emulators in development mode');
+    console.log('Connecting to Firebase emulators...');
 
     // Import emulator connection functions
     import('firebase/auth').then(({ connectAuthEmulator }) => {
-      connectAuthEmulator(auth, 'http://127.0.0.1:9099');
+      console.log('Connecting to Auth emulator on http://127.0.0.1:9099');
+      connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
     });
 
     import('firebase/firestore').then(({ connectFirestoreEmulator }) => {
+      console.log('Connecting to Firestore emulator on 127.0.0.1:8080');
       connectFirestoreEmulator(getFirestore(app), '127.0.0.1', 8080);
     });
 
     import('firebase/storage').then(({ connectStorageEmulator }) => {
+      console.log('Connecting to Storage emulator on 127.0.0.1:9199');
       connectStorageEmulator(getStorage(app), '127.0.0.1', 9199);
     });
   }
 }
 
 // Email link authentication settings
-const actionCodeSettings = {
+const actionCodeSettings: ActionCodeSettings = {
   // URL to redirect to after email link is clicked
   url: `${window.location.origin}/auth/email-signin-complete`,
   // Handle the link in the app instead of browser
   handleCodeInApp: true,
-  // iOS and Android app configuration (if applicable)
-  iOS: {
-    bundleId: import.meta.env.VITE_IOS_BUNDLE_ID
-  },
-  android: {
-    packageName: import.meta.env.VITE_ANDROID_PACKAGE_NAME,
-    installApp: true,
-    minimumVersion: '12'
-  },
-  // For Firebase Dynamic Links (optional)
-  dynamicLinkDomain: import.meta.env.VITE_FIREBASE_DYNAMIC_LINK_DOMAIN,
+  // Only include iOS and Android settings if they are defined
+  ...(import.meta.env.VITE_IOS_BUNDLE_ID ? {
+    iOS: {
+      bundleId: import.meta.env.VITE_IOS_BUNDLE_ID
+    }
+  } : {}),
+  ...(import.meta.env.VITE_ANDROID_PACKAGE_NAME ? {
+    android: {
+      packageName: import.meta.env.VITE_ANDROID_PACKAGE_NAME,
+      installApp: true,
+      minimumVersion: '12'
+    }
+  } : {}),
+  ...(import.meta.env.VITE_FIREBASE_DYNAMIC_LINK_DOMAIN ? {
+    dynamicLinkDomain: import.meta.env.VITE_FIREBASE_DYNAMIC_LINK_DOMAIN
+  } : {})
 };
 
 // Log the current configuration for debugging
@@ -80,16 +97,21 @@ console.log('Current origin:', window.location.origin);
 // Sign up with email and password
 export const signUpWithEmail = async (email: string, password: string, displayName: string) => {
   try {
+    console.log(`Attempting to sign up user with email: ${email}`);
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    console.log('User created successfully:', userCredential.user.uid);
+    
     // Update user profile with display name
     if (userCredential.user) {
+      console.log('Updating user profile with display name:', displayName);
       await updateProfile(userCredential.user, {
         displayName
       });
+      console.log('User profile updated successfully');
     }
     return userCredential.user;
-  } catch (error) {
-    console.error("Error signing up:", error);
+  } catch (error: any) {
+    console.error("Error signing up:", error.code, error.message);
     throw error;
   }
 };
@@ -97,10 +119,12 @@ export const signUpWithEmail = async (email: string, password: string, displayNa
 // Sign in with email and password
 export const signInWithEmail = async (email: string, password: string) => {
   try {
+    console.log(`Attempting to sign in user with email: ${email}`);
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log('User signed in successfully:', userCredential.user.uid);
     return userCredential.user;
-  } catch (error) {
-    console.error("Error signing in:", error);
+  } catch (error: any) {
+    console.error("Error signing in:", error.code, error.message);
     throw error;
   }
 };
@@ -191,4 +215,15 @@ export const uploadFile = async (file: File, path: string): Promise<string> => {
   }
 };
 
+// AI Helper Functions
+
+// TODO: Implement generateContent when Firebase AI is available
+export const generateContent = async (prompt: string): Promise<string> => {
+  // Temporary placeholder implementation
+  console.warn('Firebase AI not yet available. This is a placeholder response.');
+  return `AI Response to: "${prompt}"\n\nThis is a placeholder response. Firebase AI integration will be available when the firebase/ai package is released.`;
+};
+
 export { auth, db, storage };
+// TODO: Export ai and model when Firebase AI is available
+// export { auth, db, storage, ai, model };

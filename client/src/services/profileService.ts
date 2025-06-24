@@ -120,48 +120,91 @@ export const profileService = {
    * Get user profile data
    */
   async getProfile(userId: string): Promise<ProfileData> {
-    const response = await apiClient.get<ProfileData>(`/profile/${userId}`);
-    return response.data;
+    try {
+      const response = await apiClient.get<ProfileData>(`/profile/${userId}`);
+      return response.data;
+    } catch (error: any) {
+      console.error('Error fetching profile:', error);
+      // Return default profile structure if profile doesn't exist
+      if (error.status === 404) {
+        return {
+          personal: {
+            fullName: '',
+            phoneNumber: '',
+            location: '',
+          },
+          education: {
+            highestEducation: '',
+            schoolName: '',
+          },
+          experience: {
+            hasExperience: false,
+          },
+          skills: {
+            skills: [],
+            languages: [],
+          },
+        };
+      }
+      throw error;
+    }
   },
 
   /**
    * Update user profile data
    */
   async updateProfile(userId: string, data: Partial<ProfileData>): Promise<void> {
-    await apiClient.put(`/profile/${userId}`, data);
+    try {
+      await apiClient.put(`/profile/${userId}`, data);
+    } catch (error: any) {
+      console.error('Error updating profile:', error);
+      throw new Error(error.message || 'Failed to update profile');
+    }
   },
 
   /**
    * Scan CV to extract information
    */
   async scanCV(file: File): Promise<CVScanResponse> {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('enhancedScan', 'true');
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('enhancedScan', 'true');
 
-    const response = await apiClient.post<CVScanResponse>('/api/scan-cv', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    
-    return response.data;
+      const response = await apiClient.post<CVScanResponse>('/api/scan-cv', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 60000, // 60 seconds for CV processing
+      });
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Error scanning CV:', error);
+      throw new Error(error.message || 'Failed to scan CV. Please try again.');
+    }
   },
 
   /**
    * Enhance profile image
    */
   async enhanceImage(file: File): Promise<ImageEnhancementResponse> {
-    const formData = new FormData();
-    formData.append('file', file);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
 
-    const response = await apiClient.post<ImageEnhancementResponse>('/api/enhance-image', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    
-    return response.data;
+      const response = await apiClient.post<ImageEnhancementResponse>('/api/enhance-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 30000, // 30 seconds for image processing
+      });
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Error enhancing image:', error);
+      throw new Error(error.message || 'Failed to enhance image. Please try again.');
+    }
   },
 
   /**
@@ -177,13 +220,20 @@ export const profileService = {
       suggestedFix?: string;
     }>
   ): Promise<AIPromptResponse> {
-    const response = await apiClient.post<AIPromptResponse>('/api/process-ai-prompt', {
-      prompt,
-      cvData,
-      warnings,
-    });
-    
-    return response.data;
+    try {
+      const response = await apiClient.post<AIPromptResponse>('/api/process-ai-prompt', {
+        prompt,
+        cvData,
+        warnings,
+      }, {
+        timeout: 30000, // 30 seconds for AI processing
+      });
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Error processing AI prompt:', error);
+      throw new Error(error.message || 'Failed to process AI prompt. Please try again.');
+    }
   },
 };
 

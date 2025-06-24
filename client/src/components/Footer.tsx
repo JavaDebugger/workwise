@@ -18,17 +18,13 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-primary mb-4">The Low Level Jobs Directory is an online platform specifically designed to connect young South Africans with entry-level employment opportunities that require minimal experience or qualifications.</p>
-            <div className="flex space-x-4">
-              <a href="https://facebook.com/workwisesa" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-accent" aria-label="Facebook">
+            <div className="flex space-x-4">              <a href="https://www.facebook.com/profile.php?id=61575790149796" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-accent" aria-label="Facebook">
                 <i className="fab fa-facebook-f"></i>
-              </a>
-              <a href="https://twitter.com/workwisesa" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-accent" aria-label="Twitter">
-                <i className="fab fa-twitter"></i>
-              </a>
-              <a href="https://linkedin.com/company/workwisesa" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-accent" aria-label="LinkedIn">
+              </a>              <a href="https://x.com/WorkWise_SA" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-accent" aria-label="X (formerly Twitter)">
+                <i className="fab fa-x-twitter"></i>
+              </a>              <a href="https://www.linkedin.com/in/work-wise-sa-36a133370/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-accent" aria-label="LinkedIn">
                 <i className="fab fa-linkedin-in"></i>
-              </a>
-              <a href="https://instagram.com/workwisesa" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-accent" aria-label="Instagram">
+              </a><a href="https://www.instagram.com/work.wise_sa/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-accent" aria-label="Instagram">
                 <i className="fab fa-instagram"></i>
               </a>
             </div>

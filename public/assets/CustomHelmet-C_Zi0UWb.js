@@ -1,0 +1,1 @@
+import{j as t}from"./vendor-ui-s4VaHhe3.js";import{e as r}from"./vendor-react-BLR_YkO_.js";const n=({title:e,description:s})=>t.jsxs(r,{children:[t.jsx("title",{children:e}),t.jsx("meta",{name:"description",content:s})]});export{n as C};

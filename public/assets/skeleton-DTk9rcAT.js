@@ -1,0 +1,1 @@
+import{j as m}from"./vendor-BOJOR_z2.js";import{a as o}from"./contact-C28TQl3y.js";function a({className:e,...t}){return m.jsx("div",{className:o("animate-pulse rounded-md bg-muted",e),...t})}export{a as S};

@@ -1,0 +1,1 @@
+import{j as t}from"./vendor-BOJOR_z2.js";import{B as s}from"./contact-C28TQl3y.js";const a=()=>t.jsxs("div",{className:"p-8",children:[t.jsx("h1",{className:"text-3xl font-bold text-primary",children:"Test Page"}),t.jsx("div",{className:"mt-4",children:t.jsx(s,{children:"Primary Button"})})]});export{a as default};

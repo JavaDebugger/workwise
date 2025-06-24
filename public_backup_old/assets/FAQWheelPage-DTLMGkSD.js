@@ -1,0 +1,1 @@
+import{j as e}from"./vendor-BOJOR_z2.js";import{F as t}from"./FAQWheelPreview-f9jEfcaO.js";import"./use-mobile-CCtnFASt.js";import"./apiClient-Ddw1nvhZ.js";import"./contact-C28TQl3y.js";const i=()=>e.jsxs("div",{className:"container mx-auto py-8",children:[e.jsx("h1",{className:"text-3xl font-bold text-center mb-8",children:"FAQ Wheel Demo"}),e.jsx(t,{})]});export{i as default};

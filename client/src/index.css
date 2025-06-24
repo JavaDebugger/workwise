@@ -11,5 +11,32 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1; /* Enable ligatures and contextual alternates */
   }
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeInUp {
+  opacity: 0; /* Start hidden */
+  animation-name: fadeInUp;
+  animation-duration: 0.8s; /* Duration of the animation */
+  animation-fill-mode: forwards; /* Keep the state of the last keyframe */
+  animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); /* Smooth easing */
+  animation-delay: var(--animation-delay, 0s); /* Allow staggered animations */
+}
+
+/* For elements that don't use Intersection Observer (like the header initially) */
+.initial-animate-fadeInUp {
+  animation: fadeInUp 1s cubic-bezier(0.165, 0.84, 0.44, 1) 0.2s forwards;
 }

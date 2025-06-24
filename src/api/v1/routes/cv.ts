@@ -11,6 +11,7 @@ import {
   translateTextWithClaude,
   analyzeImage
 } from '../../../../server/anthropic';
+import { generateCVPDF } from '../../../../server/services/cvTemplateService';
 
 export function registerCVRoutes(router: Router) {
   // AI-powered CV generation routes
@@ -185,21 +186,48 @@ export function registerCVRoutes(router: Router) {
         });
       }
 
-      const { image } = req.body;
+      const { imageUrl } = req.body;
       
-      if (!image) {
+      if (!imageUrl) {
         return res.status(400).json({ 
-          message: "Missing image data" 
+          message: "Missing image URL" 
         });
       }
       
-      const analysis = await analyzeImage(image);
+      const analysis = await analyzeImage(imageUrl);
       
       res.json({ analysis });
     } catch (error) {
       console.error("Error analyzing image with Claude:", error);
       res.status(500).json({ 
         message: "Failed to analyze image with Claude",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+  
+  // CV Template generation route
+  router.post("/cv/generate-template", async (req, res) => {
+    try {
+      const cvData = req.body;
+      
+      // Validate required fields
+      const { personalInfo, professionalSummary, experience, education, skills } = cvData;
+      if (!personalInfo?.fullName || !professionalSummary || !experience?.length || !education?.length || !skills?.length) {
+        return res.status(400).json({ 
+          message: "Missing required CV information" 
+        });
+      }
+      
+      const pdfBuffer = await generateCVPDF(cvData);
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="cv-${personalInfo.fullName.replace(/\s+/g, '_')}.pdf"`);
+      res.send(pdfBuffer);
+    } catch (error) {
+      console.error("Error generating CV template:", error);
+      res.status(500).json({ 
+        message: "Failed to generate CV template",
         error: error instanceof Error ? error.message : "Unknown error"
       });
     }
